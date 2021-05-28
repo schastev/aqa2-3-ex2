@@ -52,14 +52,14 @@ public class AuthTest {
         fillIn("invalid", "invalid");
         $(".notification[data-test-id='error-notification']")
                 .shouldBe(Condition.visible).
-                shouldHave(Condition.text("Неверно указан логин или пароль"));
+                shouldHave(Condition.text("Неверно указан логин или пароль_"));
     }
 
     @Test
     public void activeUserValidCredentialsTest() {
         setUp("active");
         fillIn("valid", "valid");
-        $(".heading").shouldHave(Condition.exactText("Личный кабинет"));
+        $(".heading").shouldHave(Condition.exactText("Личный кабинет_"));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class AuthTest {
         fillIn("valid", "valid");
         $(".notification[data-test-id='error-notification']")
                 .shouldBe(Condition.visible)
-                .shouldHave(Condition.text("заблокирован"));
+                .shouldHave(Condition.text("заблокирован_"));
     }
 
     @Test
@@ -77,7 +77,7 @@ public class AuthTest {
         fillIn("invalid", "valid");
         $(".notification[data-test-id='error-notification']").
                 shouldBe(Condition.visible).
-                shouldHave(Condition.text("Неверно указан логин или пароль"));
+                shouldHave(Condition.text("Неверно указан логин или пароль_"));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class AuthTest {
         fillIn("invalid", "valid");
         $(".notification[data-test-id='error-notification']").
                 shouldBe(Condition.visible).
-                shouldHave(Condition.text("Неверно указан логин или пароль"));
+                shouldHave(Condition.text("Неверно указан логин или пароль_"));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class AuthTest {
         fillIn("valid", "invalid");
         $(".notification[data-test-id='error-notification']")
                 .shouldBe(Condition.visible).
-                shouldHave(Condition.text("Неверно указан логин или пароль"));
+                shouldHave(Condition.text("Неверно указан логин или пароль_"));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class AuthTest {
         fillIn("valid", "invalid");
         $(".notification[data-test-id='error-notification']").
                 shouldBe(Condition.visible).
-                shouldHave(Condition.text("Неверно указан логин или пароль"));
+                shouldHave(Condition.text("Неверно указан логин или пароль_"));
     }
 
 }
