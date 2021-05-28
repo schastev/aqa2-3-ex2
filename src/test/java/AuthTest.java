@@ -9,7 +9,6 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static io.restassured.RestAssured.given;
 
-//автотест за полчаса
 public class AuthTest {
     private RequestSpecification requestSpec = new RequestSpecBuilder()
             .setBaseUri("http://localhost")
