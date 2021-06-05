@@ -37,12 +37,11 @@ public class UserGenerator {
         return faker.hobbit().character().toLowerCase();
     }
 
-    public static String generateStatus(boolean activeStatus){
+    public static String generateStatus(boolean activeStatus) {
         String status;
-        if (activeStatus){
-            status ="active";
-        }
-        else {
+        if (activeStatus) {
+            status = "active";
+        } else {
             status = "blocked";
         }
         return status;
