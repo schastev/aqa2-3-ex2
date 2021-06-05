@@ -10,7 +10,7 @@ public class UserGenerator {
     public static class User {
         private String login;
         private String password;
-        private boolean status;
+        private String status;
 
         public String getLogin() {
             return login;
@@ -20,7 +20,7 @@ public class UserGenerator {
             return password;
         }
 
-        public User(String login, String password, boolean status) {
+        public User(String login, String password, String status) {
             this.login = login;
             this.password = password;
             this.status = status;
@@ -37,12 +37,23 @@ public class UserGenerator {
         return faker.hobbit().character().toLowerCase();
     }
 
+    public static String generateStatus(boolean activeStatus){
+        String status;
+        if (activeStatus){
+            status ="active";
+        }
+        else {
+            status = "blocked";
+        }
+        return status;
+    }
+
     public static class Registration {
         private Registration() {
         }
 
         public static User generateUser(String locale, boolean activeAccount) {
-            return new User(generateLogin(locale), generatePassword(locale), activeAccount);
+            return new User(generateLogin(locale), generatePassword(locale), generateStatus(activeAccount));
         }
     }
 }
