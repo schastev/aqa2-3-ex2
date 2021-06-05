@@ -1,4 +1,5 @@
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.SelenideElement;
 import com.google.gson.Gson;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -18,10 +19,15 @@ public class AuthTest {
             .log(LogDetail.ALL)
             .build();
     UserGenerator.User user;
+    private SelenideElement loginField = $("[data-test-id='login'] .input__control");
+    private SelenideElement passwordField = $("[data-test-id='password'] .input__control");
+    private SelenideElement loginButton = $(".button[data-test-id='action-login']");
+    private SelenideElement notification = $(".notification[data-test-id='error-notification']");
+    private SelenideElement heading = $(".heading");
 
-    void setUp(String status) {
+    void setUp(boolean activeAccount) {
         Gson gson = new Gson();
-        user = UserGenerator.Registration.generateUser("en", status);
+        user = UserGenerator.Registration.generateUser("en", activeAccount);
         given() // "дано"
                 .spec(requestSpec) // указываем, какую спецификацию используем
                 .body(gson.toJson(user)) // передаём в теле объект, который будет преобразован в JSON
@@ -32,79 +38,89 @@ public class AuthTest {
         open("http://localhost:9999");
     }
 
-    void fillIn(String login, String password) {
-        if (login.equals("invalid")) {
-            $("[data-test-id='login'] .input__control").setValue("foo");
-        } else if (login.equals("valid")) {
-            $("[data-test-id='login'] .input__control").setValue(user.getLogin());
+    void inputPassword(boolean passwordValidity) {
+        if (!passwordValidity) {
+            passwordField.setValue("foo");
+        } else {
+            passwordField.setValue(user.getPassword());
         }
-        if (password.equals("invalid")) {
-            $("[data-test-id='password'] .input__control").setValue("foo");
-        } else if (password.equals("valid")) {
-            $("[data-test-id='password'] .input__control").setValue(user.getPassword());
+        loginButton.click();
+    }
+
+    void inputLogin(boolean loginValidity) {
+        if (!loginValidity) {
+            loginField.setValue("foo");
+        } else {
+            loginField.setValue(user.getLogin());
         }
-        $(".button[data-test-id='action-login']").click();
     }
 
     @Test
     public void invalidUserTest() {
-        setUp("active");
-        fillIn("invalid", "invalid");
-        $(".notification[data-test-id='error-notification']")
-                .shouldBe(Condition.visible).
-                shouldHave(Condition.text("Неверно указан логин или пароль"));
+        setUp(true);
+        inputLogin(false);
+        inputPassword(false);
+        notification
+                .shouldBe(Condition.visible)
+                .shouldHave(Condition.text("Неверно указан логин или пароль"));
     }
 
     @Test
     public void activeUserValidCredentialsTest() {
-        setUp("active");
-        fillIn("valid", "valid");
-        $(".heading").shouldHave(Condition.exactText("Личный кабинет"));
+        setUp(true);
+        inputLogin(true);
+        inputPassword(true);
+        heading.shouldHave(Condition.exactText("Личный кабинет"));
     }
 
     @Test
     public void blockedUserValidCredentialsTest() {
-        setUp("blocked");
-        fillIn("valid", "valid");
-        $(".notification[data-test-id='error-notification']")
+        setUp(false);
+        inputLogin(true);
+        inputPassword(true);
+        notification
                 .shouldBe(Condition.visible)
                 .shouldHave(Condition.text("заблокирован"));
     }
 
     @Test
     public void activeUserInvalidLoginTest() {
-        setUp("active");
-        fillIn("invalid", "valid");
-        $(".notification[data-test-id='error-notification']").
-                shouldBe(Condition.visible).
-                shouldHave(Condition.text("Неверно указан логин или пароль"));
+        setUp(true);
+        inputLogin(false);
+        inputPassword(true);
+        notification
+                .shouldBe(Condition.visible)
+                .shouldHave(Condition.text("Неверно указан логин или пароль"));
     }
 
     @Test
     public void blockedUserInvalidLoginTest() {
-        setUp("blocked");
-        fillIn("invalid", "valid");
-        $(".notification[data-test-id='error-notification']").
-                shouldBe(Condition.visible).
-                shouldHave(Condition.text("Неверно указан логин или пароль"));
+        setUp(false);
+        inputLogin(false);
+        inputPassword(true);
+        notification
+                .shouldBe(Condition.visible)
+                .shouldHave(Condition.text("Неверно указан логин или пароль"));
     }
 
     @Test
     public void activeUserInvalidPasswordTest() {
-        setUp("active");
-        fillIn("valid", "invalid");
-        $(".notification[data-test-id='error-notification']")
-                .shouldBe(Condition.visible).
-                shouldHave(Condition.text("Неверно указан логин или пароль"));
+        setUp(false);
+        inputLogin(true);
+        inputPassword(false);
+        notification
+                .shouldBe(Condition.visible)
+                .shouldHave(Condition.text("Неверно указан логин или пароль"));
     }
 
     @Test
     public void blockedUserInvalidPasswordTest() {
-        setUp("blocked");
-        fillIn("valid", "invalid");
-        $(".notification[data-test-id='error-notification']").
-                shouldBe(Condition.visible).
-                shouldHave(Condition.text("Неверно указан логин или пароль"));
+        setUp(false);
+        inputLogin(true);
+        inputPassword(false);
+        notification
+                .shouldBe(Condition.visible)
+                .shouldHave(Condition.text("Неверно указан логин или пароль"));
     }
 
 }
